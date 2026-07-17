@@ -1,0 +1,35 @@
+name: Notebooks Full Run
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 6 * * 1' # weekly, Monday 06:00 UTC
+jobs:
+  run-genai:
+    runs-on: ubuntu-latest
+    env:
+      CI: "true" # notebooks read this to shrink epochs/dataset sizes for a fast, non-full-scale run
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Cache pip packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: pip-genai-${{ hashFiles('pyproject.toml') }}
+      - name: Cache HuggingFace / torch model and dataset downloads
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/huggingface
+            ~/.cache/torch
+          key: hf-torch-cache-${{ hashFiles('pyproject.toml') }}
+      - run: python -m pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
+      - run: python -m pip install -e .
+      - run: python -m ipykernel install --user --name py311-genai --display-name "Python 3.11 (GenAI)"
+      - run: python scripts/run_notebooks.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: genai-notebooks
+          path: genai/notebooks/*.ipynb

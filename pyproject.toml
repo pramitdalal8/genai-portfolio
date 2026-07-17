@@ -1,0 +1,50 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+packages = ["portfolio_common"]
+
+[project]
+name = "genai-portfolio"
+version = "0.1.0"
+description = "Generative AI portfolio: prompt engineering, embeddings/RAG, responsible GenAI, LoRA fine-tuning"
+requires-python = ">=3.11,<3.12"
+dependencies = [
+  "pandas>=2.2",
+  "pandas-stubs>=2.2",
+  "numpy>=1.26",
+  "matplotlib>=3.8",
+  "pytest>=8.0",
+  "ruff>=0.6",
+  "mypy>=1.10",
+  "transformers>=4.44",
+  "sentence-transformers>=3.0",
+  "datasets>=2.20",
+  "peft>=0.12",
+  "accelerate>=0.33",
+  "sentencepiece>=0.2",
+  "protobuf>=4.25",
+  "nbclient>=0.10",
+  "nbconvert>=7.16",
+  "nbformat>=5.10",
+  "ipykernel>=6.29",
+]
+
+# PyTorch has no Windows wheels for newer interpreters yet, and isn't a plain PyPI
+# dependency (needs the CPU-only index) — install it separately, see the README.
+# No standalone unit test suite: correctness here is checked by executing every
+# notebook end to end (see notebook-check.yml) rather than a pytest suite.
+
+[tool.ruff]
+line-length = 100
+
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
+
+[[tool.mypy.overrides]]
+module = ["torch.*", "transformers.*", "sentence_transformers.*", "peft.*", "datasets.*"]
+ignore_missing_imports = true

@@ -1,0 +1,41 @@
+name: Notebook Structure Check
+on:
+  pull_request:
+jobs:
+  notebooks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install nbformat
+      - name: Validate notebook structure (no execution — see notebooks-full-run.yml for that)
+        run: |
+          python - <<'PY'
+          import sys
+          from pathlib import Path
+
+          import nbformat
+
+          notebook_paths = sorted(Path(".").glob("*/notebooks/*.ipynb"))
+          if not notebook_paths:
+              sys.exit("No notebooks found under */notebooks/*.ipynb")
+
+          failed = False
+          for path in notebook_paths:
+              try:
+                  nb = nbformat.read(path, as_version=4)
+                  nbformat.validate(nb)
+              except Exception as exc:
+                  print(f"INVALID: {path}: {exc}")
+                  failed = True
+                  continue
+              code_cells = [c for c in nb.cells if c.cell_type == "code"]
+              if not code_cells:
+                  print(f"EMPTY: {path} has no code cells")
+                  failed = True
+              print(f"ok: {path} ({len(nb.cells)} cells)")
+
+          sys.exit(1 if failed else 0)
+          PY
