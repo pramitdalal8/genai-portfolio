@@ -1,5 +1,8 @@
 # GenAI Portfolio
 
+[![CI](https://github.com/pramitdalal8/genai-portfolio/actions/workflows/ci.yml/badge.svg)](https://github.com/pramitdalal8/genai-portfolio/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 Generative AI and LLMs: 4 fully-executed notebooks — prompt engineering, embeddings &
 RAG, responsible GenAI auditing, and LoRA fine-tuning — all fully local (no API keys,
 no paid calls).
